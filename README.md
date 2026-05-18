@@ -6,6 +6,9 @@ Finally, a good-looking standalone ox_lib death script.
 
 [baseevents](https://docs.fivem.net/docs/resources/baseevents/) (baseevents is installed on every FiveM server, you need to manually ensure it before any resources, but after FiveM by doing `ensure baseevents`.)
 
+# Installation
+Installation is simple, just download the latest [release binary](https://github.com/ItsZeph/zeph-death-script/releases), unzip the file, drag and drop the contents into your preferred scripts location, if you put it in /resources, you will need to ensure it via `ensure zeph-death-script`, then edit the config.lua file to what you need.
+
 # Ace Permissions
 For /adrev and /adres, you must have the `death.admin` ace permission, you can give this by using `add_ace` in your server.cfg. I have an example below.
 ```
