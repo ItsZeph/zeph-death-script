@@ -8,7 +8,9 @@ Finally, a good-looking standalone ox_lib death script.
 
 # Ace Permissions
 For /adrev and /adres, you must have the `death.admin` ace permission, you can give this by using `add_ace` in your server.cfg. I have an example below.
-```add_ace group.staff death.admin allow```
+```
+add_ace group.staff death.admin allow
+```
 
 # Configuration
 You can configure the respawn and revive timer, along with the locations of respawns. You will need to change the respawns, as they are configured for my MLOs, I've put comments next to them to say which MLOs they are, so if they match, you don't need to change them.
