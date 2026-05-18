@@ -3,6 +3,7 @@ Finally, a good-looking standalone ox_lib death script.
 
 # Requirements
 [ox_lib](https://coxdocs.dev) (Even if you don't download this script, you should have ox_lib anyway.)
+
 [baseevents](https://docs.fivem.net/docs/resources/baseevents/) (baseevents is installed on every FiveM server, you need to manually ensure it before any resources, but after FiveM by doing `ensure baseevents`.)
 
 # Ace Permissions
