@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Death UI</title>
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    width: 100vw;
+    height: 100vh;
+    background: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    font-family: 'Segoe UI', sans-serif;
+    pointer-events: none;
+  }
+
+  #death-ui {
+    display: none;
+    flex-direction: column;
+    gap: 10px;
+    margin-right: 28px;
+    width: 230px;
+    animation: fadeIn 0.5s ease forwards;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateX(20px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+
+  .ui-card {
+    background: rgba(10, 10, 15, 0.82);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    border-left: 3px solid var(--accent);
+    border-radius: 6px;
+    padding: 12px 14px;
+    backdrop-filter: blur(8px);
+  }
+
+  .ui-card.respawn { --accent: #e05c5c; }
+  .ui-card.revive  { --accent: #5caaff; }
+
+  .card-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.45);
+    margin-bottom: 6px;
+  }
+
+  .timer-row {
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+  }
+
+  .timer-value {
+    font-size: 30px;
+    font-weight: 700;
+    color: #fff;
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+  }
+
+  .timer-unit {
+    font-size: 12px;
+    color: rgba(255,255,255,0.35);
+  }
+
+  .progress-bar-bg {
+    margin-top: 8px;
+    width: 100%;
+    height: 3px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 99px;
+    overflow: hidden;
+  }
+
+  .progress-bar-fill {
+    height: 100%;
+    border-radius: 99px;
+    background: var(--accent);
+    width: 100%;
+    transition: width 1s linear;
+  }
+
+  .status-badge {
+    margin-top: 7px;
+    display: inline-block;
+    font-size: 9.5px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 2px 7px;
+    border-radius: 99px;
+    background: rgba(255,255,255,0.06);
+    color: rgba(255,255,255,0.35);
+  }
+
+  .status-badge.ready {
+    background: rgba(92, 230, 130, 0.15);
+    color: #5ce682;
+  }
+
+  .disclaimer {
+    font-size: 11px;
+    font-style: italic;
+    color: rgba(255,255,255,0.55);
+    line-height: 1.5;
+    text-align: center;
+    padding: 4px 2px 0;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+  }
+</style>
+</head>
+<body>
+
+<div id="death-ui">
+
+  <div class="ui-card respawn">
+    <div class="card-label">Respawn</div>
+    <div class="timer-row">
+      <span class="timer-value" id="respawn-timer">60</span>
+      <span class="timer-unit">sec</span>
+    </div>
+    <div class="progress-bar-bg">
+      <div class="progress-bar-fill" id="respawn-bar"></div>
+    </div>
+    <div class="status-badge" id="respawn-status">Waiting&hellip;</div>
+  </div>
+
+  <div class="ui-card revive">
+    <div class="card-label">Revive</div>
+    <div class="timer-row">
+      <span class="timer-value" id="revive-timer">120</span>
+      <span class="timer-unit">sec</span>
+    </div>
+    <div class="progress-bar-bg">
+      <div class="progress-bar-fill" id="revive-bar"></div>
+    </div>
+    <div class="status-badge" id="revive-status">Waiting&hellip;</div>
+  </div>
+
+  <div class="disclaimer">
+    Do not respawn or revive during a scene, doing this may result in moderation action.
+  </div>
+
+</div>
+
+<script>
+  const ui = document.getElementById('death-ui');
+
+  let respawnTotal = 60;
+  let reviveTotal  = 120;
+  let respawnLeft  = 60;
+  let reviveLeft   = 120;
+  let respawnInterval = null;
+  let reviveInterval  = null;
+
+  function formatTime(s) { return String(s); }
+
+  function startRespawnTimer(total) {
+    respawnTotal = total;
+    respawnLeft  = total;
+    const bar    = document.getElementById('respawn-bar');
+    const label  = document.getElementById('respawn-timer');
+    const status = document.getElementById('respawn-status');
+
+    bar.style.width = '100%';
+    label.textContent = formatTime(respawnLeft);
+    status.textContent = 'Waiting\u2026';
+    status.classList.remove('ready');
+
+    clearInterval(respawnInterval);
+    respawnInterval = setInterval(() => {
+      respawnLeft = Math.max(0, respawnLeft - 1);
+      label.textContent = formatTime(respawnLeft);
+      bar.style.width = ((respawnLeft / respawnTotal) * 100) + '%';
+      if (respawnLeft <= 0) {
+        clearInterval(respawnInterval);
+      }
+    }, 1000);
+  }
+
+  function startReviveTimer(total) {
+    reviveTotal = total;
+    reviveLeft  = total;
+    const bar    = document.getElementById('revive-bar');
+    const label  = document.getElementById('revive-timer');
+    const status = document.getElementById('revive-status');
+
+    bar.style.width = '100%';
+    label.textContent = formatTime(reviveLeft);
+    status.textContent = 'Waiting\u2026';
+    status.classList.remove('ready');
+
+    clearInterval(reviveInterval);
+    reviveInterval = setInterval(() => {
+      reviveLeft = Math.max(0, reviveLeft - 1);
+      label.textContent = formatTime(reviveLeft);
+      bar.style.width = ((reviveLeft / reviveTotal) * 100) + '%';
+      if (reviveLeft <= 0) {
+        clearInterval(reviveInterval);
+      }
+    }, 1000);
+  }
+
+  window.addEventListener('message', function(event) {
+    const data = event.data;
+
+    if (data.action === 'show') {
+      ui.style.display = 'flex';
+      startRespawnTimer(data.respawnTime);
+      startReviveTimer(data.reviveTime);
+    }
+
+    if (data.action === 'hide') {
+      ui.style.display = 'none';
+      clearInterval(respawnInterval);
+      clearInterval(reviveInterval);
+    }
+
+    if (data.action === 'respawnReady') {
+      const status = document.getElementById('respawn-status');
+      status.textContent = 'Type /respawn';
+      status.classList.add('ready');
+    }
+
+    if (data.action === 'reviveReady') {
+      const status = document.getElementById('revive-status');
+      status.textContent = 'Type /revive';
+      status.classList.add('ready');
+    }
+  });
+</script>
+</body>
+</html>
