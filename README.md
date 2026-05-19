@@ -1,3 +1,6 @@
+> [!WARNING]
+> Do not download the source code of this resource, as it does not reflect the latest changes. Only download from [releases](https://github.com/ItsZeph/zeph-death-script/releases).
+
 # zeph-death-script
 Finally, a good-looking standalone ox_lib death script.
 
